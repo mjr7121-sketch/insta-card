@@ -6,6 +6,10 @@ import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 
+import "./card-slide.js";
+import "./card-arrow.js";
+import "./card-indicator.js";
+
 /**
  * `insta-card`
  * 
@@ -21,6 +25,8 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
   constructor() {
     super();
     this.title = "";
+    this.index = 0;
+    this.foxImage = "";
     this.t = this.t || {};
     this.t = {
       ...this.t,
@@ -39,7 +45,20 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      index: {type: Number, reflect: true},
+      foxImage: {type: String},
     };
+  }
+
+  connectedCallback(){
+    super.connectedCallback();
+    this.getFox();
+  }
+
+  async getFox(){
+    const fetchTheFox = await fetch("https://randomfox.ca/floof/");
+    const data = await fetchTheFox.json();
+    this.foxImage = data.image; 
   }
 
   // Lit scoped styles
@@ -59,6 +78,11 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
       h3 span {
         font-size: var(--insta-card-label-font-size, var(--ddd-font-size-s));
       }
+      img{
+        width: 200px;
+        height: 140px; 
+      }
+  
     `];
   }
 
@@ -67,7 +91,7 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
     return html`
 <div class="wrapper">
   <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
+  <img src="${this.foxImage}">
 </div>`;
   }
 
