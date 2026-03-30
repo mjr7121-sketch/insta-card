@@ -66,7 +66,7 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
  */
 
   async getFox(){
-    const fetchTheFox = await fetch("./dataStructure.json");
+    const fetchTheFox = await fetch(new URL("./dataStructure.json", import.meta.url));
     const data = await fetchTheFox.json();
     
     let newItems = [];
