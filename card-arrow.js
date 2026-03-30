@@ -6,7 +6,7 @@ import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 export class CardArrow extends DDDSuper(I18NMixin(LitElement)) {
 
   static get tag() {
-    return "playlist-arrow";
+    return "card-arrow";
   }
 
   constructor() {
@@ -29,16 +29,16 @@ export class CardArrow extends DDDSuper(I18NMixin(LitElement)) {
       }
       .wrapper {
         position: absolute;
-        top: 50%;
-        left: var(--ddd-spacing-0);
+        top: 43%;
+        left: var(--ddd-spacing-3);
         display: flex;
         justify-content: space-between;
-        width: 100%;
+        width: 24%;
         transform: translateY(-50%);
         z-index: 10;
       }
       button {
-        background-color: var(--ddd-theme-default-beaverBlue);
+        background-color: dark grey;
         color: var(--ddd-theme-default-white);
         border: none;
         padding: var(--ddd-spacing-2) var(--ddd-spacing-4);
@@ -56,9 +56,9 @@ export class CardArrow extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
     <div class="wrapper">
-        <button class="prev" @click=${() => this.dispatchEvent(new CustomEvent('prev-clicked', {bubbles: true, composed: true }))}><
+        <button class="prev" @click=${() => this.dispatchEvent(new CustomEvent('prev-clicked', {bubbles: true, composed: true }))}>←
   </button>
-        <button class="next" @click=${() => this.dispatchEvent(new CustomEvent('next-clicked', {bubbles: true, composed: true}))}>>
+        <button class="next" @click=${() => this.dispatchEvent(new CustomEvent('next-clicked', {bubbles: true, composed: true}))}>→
   </button>
     </div>
     `;
