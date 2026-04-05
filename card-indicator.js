@@ -29,19 +29,20 @@ export class CardIndicator extends DDDSuper(I18NMixin(LitElement)) {
     .dots{
       display: flex;
       gap: var(--ddd-spacing-2);
+      justify-content: center;
       margin-top: var(--ddd-spacing-2);
-      margin-left: var(--ddd-spacing-30);
+      
     }
     .dot{
-      width: 10px;
-      height: 10px;
+      width: var(--ddd-spacing-2);
+      height: var(--ddd-spacing-2);
       border-radius: 50%;
       border: none;
-      background-color: var(--ddd-theme-default-limestoneGray);
+      background-color: light-dark(var(--ddd-theme-default-potential50), var(--ddd-theme-default-potential50));
       cursor: pointer;
     }
     .dot.active{
-       background-color: var(--ddd-theme-default-skyBlue);
+       background-color: light-dark(var(--ddd-theme-default-coalyGray),var(--ddd-theme-default-white));
     }
      `];
   }

@@ -1,5 +1,6 @@
-[
-  {
+export default function handler(req, res) {
+  res.status(200).json([
+   {
       "userName": "ShihTzu2016",
       "profilePic": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEU8M1XxZ2nie8BFukvNY3qA3sBwikITJP8g&s",
       "thumbnail": "https://www.thesprucepets.com/thmb/Q6vj0wjZpuDir35ywDO3Ke4K3CA=/1500x0/filters:no_upscale():strip_icc()/shih-tzu-dog-breed-profile-1117999-hero-5541b7f6f936478ca766d85ff5af202e.jpeg",
@@ -147,4 +148,6 @@
       "caption": "cocker spaniel laying down"
 
   }
-]
+  ]); 
+}
+

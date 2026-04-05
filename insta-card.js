@@ -6,7 +6,6 @@ import { LitElement, html, css } from "lit";
 import { DDDSuper } from "@haxtheweb/d-d-d/d-d-d.js";
 import { I18NMixin } from "@haxtheweb/i18n-manager/lib/I18NMixin.js";
 
-import "./card-slide.js";
 import "./card-arrow.js";
 import "./card-indicator.js";
 
@@ -56,8 +55,23 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
     super.connectedCallback();
     this.getFox();
 
+  const params = new URLSearchParams(window.location.search);
+  const indexFromURL = params.get("activeIndex");
+
+  if (indexFromURL !== null) {
+  this.index = parseInt(indexFromURL);
+  }
+
     this.addEventListener("prev-clicked", this.prev);
     this.addEventListener("next-clicked", this.next);
+
+    this.addEventListener("dot-clicked", (e) => {
+    this.index = e.detail.index;
+
+    const url = new URL(window.location);
+    url.searchParams.set("activeIndex", this.index);
+    window.history.pushState({}, "", url);
+});
   }
 
   /**
@@ -66,7 +80,8 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
  */
 
   async getFox(){
-    const fetchTheFox = await fetch(new URL("./dataStructure.json", import.meta.url));
+    const fetchTheFox = await fetch("/api/dataStructure");
+   
     const data = await fetchTheFox.json();
     
     let newItems = [];
@@ -80,9 +95,10 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
     this.items = newItems;
 
     const saved = JSON.parse(localStorage.getItem("likes"));
-    if(saved){
-      this.items = saved;
-    }
+
+    if (saved && saved.length === newItems.length) {
+    this.items = saved;
+}
   }
 
   toggleLike(index) {
@@ -96,12 +112,20 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
   prev() {
   if (this.index > 0) {
     this.index--;
-  }
+
+    const url = new URL(window.location);
+    url.searchParams.set("activeIndex", this.index);
+    window.history.pushState({}, "", url);
+    }
   }
 
   next() {
     if (this.index < this.items.length - 1) {
     this.index++;
+
+    const url = new URL(window.location);
+    url.searchParams.set("activeIndex", this.index);
+    window.history.pushState({}, "", url);
     }
   }
 
@@ -114,42 +138,81 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
         color: var(--ddd-theme-primary);
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
+        max-width: var(--ddd-layout-maxwidth-xs, 320px);
+        width: 100%;
+
+      }
+      :root{
+        color-scheme: light-dark;
       }
       .wrapper {
-        margin: var(--ddd-spacing-1);
-        padding: var(--ddd-spacing-10);
+        padding: var(--ddd-spacing-0);
         position: relative;
+        color: light-dark(var(--ddd-theme-default-black), var(--ddd-theme-default-white));
       }
+      
       h1 span {
         font-size: var(--insta-card-label-font-size, var(--ddd-font-size-s));
       }
+
       img{
-        width: 200px;
-        height: 140px; 
-        margin: -6px 0px;
+        width: 100%;
+        height: var(--ddd-size-200, 200px);
+        display: block;
+        max-width: 100%;
+
       }
+
       p{
-        margin: var(--ddd-spacing-1);
+        margin: var(--ddd-spacing-0);
       }
+
       .card{
+        position: relative;
         margin: var(--ddd-spacing-4);
         padding: var(--ddd-spacing-5);
       }
+
       .place{
-        color: var(--ddd-theme-default-coalyGray);
+        color: light-dark(var(--ddd-theme-default-coalyGray), var(--ddd-theme-default-white));
       }
+
       .username1{
-        margin: -5px 0px;
         font-weight: var(--ddd-font-weight-bold);
       }
+
       .userName2{
         font-weight: var(--ddd-font-weight-bold);
       }
+
       .actions{
         margin: var(--ddd-spacing-2); 
       }
       .posted{
-        color: var(--ddd-theme-default-coalyGray);
+        color: light-dark(var(--ddd-theme-default-navy65), var(--ddd-theme-default-slateLight));
+      }
+      .user{
+        display: flex;
+        gap: var(--ddd-spacing-2);
+        align-items: center;
+      }
+      .profile{
+        width: var(--ddd-icon-sm, 32px);
+        height: var(--ddd-icon-sm, 32px);
+        border-radius: var(--ddd-radius-circle, 50%);
+        object-fit: cover;
+
+      }
+      .middle{
+        position: relative; 
+        align-items: center;
+        justify-content: space-between;
+      }
+      .counter{
+        position: absolute; 
+        bottom: var(--ddd-spacing-1);
+        right: var(--ddd-spacing-9);
+        color: light-dark(var(--ddd-theme-default-black), var(--ddd-theme-default-white));
       }
   
     `];
@@ -157,38 +220,73 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
 
   // Lit render the HTML
   render() {
+
+  if (!this.items.length) {
+  return html`<p>Loading...</p>`;
+  }
+
     return html`
 <div class="wrapper">
-
-<card-arrow></card-arrow>
   
-  ${this.items.length > 0 ? html`
-        <div class = "card">
+  ${this.items.map((item, i) =>  html`
+
+        <div class="card" ?hidden=${i !== this.index}>
+
+          <div class="top">
+          
+          <div class="user">
+          <img class="profile" src="${item.profilePic}" alt="Profile picture of ${item.userName}" />
           <!-- displays the profile photo and the user name -->
-          <p class= "username1">🙍🏼‍♀️ ${this.items[this.index].userName}</p>
+          <p class= "username1"> ${item.userName}</p>
+          </div>
 
           <!-- displays the location the photo was taken at -->
-          <p class= "place">📍${this.items[this.index].location}</p>
+          <p class= "place">📍${item.location}</p>
+        </div>
 
           <!-- displays the images -->
-          <img src="${this.items[this.index].pic}">
+          <div class="middle">
+          
+          <card-arrow></card-arrow>
+
+          <!-- loads one image at a time -->
+          ${i === this.index
+          ? html`<img src="${item.pic}" alt="Photo by ${item.userName}" loading="lazy">`
+          : html``}
+
+          <card-indicator 
+            .total=${this.items.length}
+            .currIndex=${this.index}>
+          </card-indicator>
 
           <!-- displays the three icons -->
           <div class="actions">
-          <span class="icon" @click=${() => this.toggleLike(this.index)}>
-          ${this.items[this.index].liked ? "❤️" : "🤍"}
+          <span class="icon" @click=${() => this.toggleLike(i)}>
+          ${item.liked ? "❤️" : "🤍"}
           </span>
           <span class="icon">💬</span>
-          <span class="icon">🔗</span>
+          <span class="icon" @click=${() => {
+          navigator.clipboard.writeText(window.location.href);
+          alert("Link copied!"); 
+          }}>🔗</span>
 
+          <div class="bottom">
           <!-- displays the username and caption  -->
-          <p class="userName2">${this.items[this.index].userName} 🦊 </p>
+          <p class="captionInfo">
+          <span class="userName2">${item.userName}</span>
+          <span class="caption">${item.caption}</span>
+        </p>
 
           <!-- displays when the image was posted -->
-          <p class="posted">${this.items[this.index].datePosted}</p>
+          <p class="posted">${item.datePosted}</p>
+
+          <p class="counter">
+          ${this.index + 1} / ${this.items.length}
+          </p>
+          </div>
         </div>
         </div>
-      ` : ""}
+      `)}
 
 </div>`;
   }
@@ -197,8 +295,7 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
    * haxProperties integration via file reference
    */
   static get haxProperties() {
-    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url)
-      .href;
+    return new URL(`./lib/${this.tag}.haxProperties.json`, import.meta.url).href;
   }
 }
 

@@ -27,28 +27,33 @@ export class CardArrow extends DDDSuper(I18NMixin(LitElement)) {
       :host {
         display: block;
       }
+      :root{
+        color-scheme: light-dark;
+      }
       .wrapper {
-        position: absolute;
-        top: 43%;
-        left: var(--ddd-spacing-3);
+        top: 50%;
         display: flex;
         justify-content: space-between;
-        width: 24%;
+        width: 100%;
+        position: absolute;
+        left: 0;
         transform: translateY(-50%);
-        z-index: 10;
+
       }
       button {
-        background-color: dark grey;
-        color: var(--ddd-theme-default-white);
-        border: none;
-        padding: var(--ddd-spacing-2) var(--ddd-spacing-4);
+        background-color: light-dark(var(--ddd-theme-default-coalyGray), var(--ddd-theme-default-white));
+        color: light-dark(var(--ddd-theme-default-white), var(--ddd-theme-default-coalyGray));;
+        padding: var(--ddd-spacing-2) var(--ddd-spacing-3);
         border-radius: var(--ddd-radius-sm);
+        border: var(--ddd-spacing-0);
         cursor: pointer;
         font-size: var(--ddd-font-size-s);
+
       }
       button:hover {
         opacity: 0.8;
       }
+
     `];
   }
 
@@ -56,9 +61,9 @@ export class CardArrow extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
     <div class="wrapper">
-        <button class="prev" @click=${() => this.dispatchEvent(new CustomEvent('prev-clicked', {bubbles: true, composed: true }))}>←
+        <button class="prev" title="Previous image" aria-label="Previous image" @click=${() => this.dispatchEvent(new CustomEvent('prev-clicked', {bubbles: true, composed: true }))}>←
   </button>
-        <button class="next" @click=${() => this.dispatchEvent(new CustomEvent('next-clicked', {bubbles: true, composed: true}))}>→
+        <button class="next" title="Next image" aria-label="Next image" @click=${() => this.dispatchEvent(new CustomEvent('next-clicked', {bubbles: true, composed: true}))}>→
   </button>
     </div>
     `;
