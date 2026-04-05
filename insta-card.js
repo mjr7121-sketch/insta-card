@@ -213,6 +213,7 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
         bottom: var(--ddd-spacing-1);
         right: var(--ddd-spacing-9);
         color: light-dark(var(--ddd-theme-default-black), var(--ddd-theme-default-white));
+        
       }
   
     `];
@@ -253,6 +254,7 @@ export class InstaCard extends DDDSuper(I18NMixin(LitElement)) {
           ${i === this.index
           ? html`<img src="${item.pic}" alt="Photo by ${item.userName}" loading="lazy">`
           : html``}
+          </div>
 
           <card-indicator 
             .total=${this.items.length}
